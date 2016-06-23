@@ -1,4 +1,4 @@
-// AnyCookie 1.0.0 (C) 2016 by Yieme. See: github.com/yieme/anycookie. License: MIT   884 bytes minimized
+// AnyCookie 1.0.2 (C) 2016 by Yieme. See: github.com/yieme/anycookie. License: MIT   884 bytes minimized, 524 gzipped
 (function(WINDOW, DOCUMENT, COOKIE, LENGTH, SUBSTRING, NAMESPACE, options, cookieDomain, i, host, anycookie, UNDEFINED) {
   WINDOW[NAMESPACE] = WINDOW[NAMESPACE] || [];
   anycookie         = WINDOW[NAMESPACE];
