@@ -1,10 +1,7 @@
-// AnyCookie 1.0.0 (C) 2016 by Yieme. See: github.com/yieme/anycookie. License: MIT
-(function(WINDOW, DOCUMENT, COOKIE, LENGTH, NAMESPACE, options, cookieDomain, i, host, anycookie, globalStore, globalStoreHost, store) {
+// AnyCookie 1.0.0 (C) 2016 by Yieme. See: github.com/yieme/anycookie. License: MIT   884 bytes minimized
+(function(WINDOW, DOCUMENT, COOKIE, LENGTH, SUBSTRING, NAMESPACE, options, cookieDomain, i, host, anycookie, UNDEFINED) {
   WINDOW[NAMESPACE] = WINDOW[NAMESPACE] || [];
   anycookie         = WINDOW[NAMESPACE];
-  host              = WINDOW.location.host.replace(/:\d+/, '');
-  options           = options           || {}
-  cookieDomain      = options.domain    || '.' + host;
 
   // get value from param-like string (eg, "x=y&name=VALUE")
   function getFromStr(name, text, nameEQ, ca, c, i) {
@@ -16,84 +13,77 @@
     for (i = 0; i < ca[LENGTH]; i++) {
       c = ca[i];
       while (c.charAt(0) === " ") {
-        c = c.substring(1, c[LENGTH]);
+        c = c[SUBSTRING](1, c[LENGTH]);
       }
       if (c.indexOf(nameEQ) === 0) {
-        return c.substring(nameEQ[LENGTH], c[LENGTH]);
+        return c[SUBSTRING](nameEQ[LENGTH], c[LENGTH]);
       }
     }
   };
 
-  // build array of stores with (G)et and (S)et operations
-  function add(name, store, getFn, setFn) {
-    if (store) {
-      store.N = name
-      store.G = getFn || store.getItem /* localStore, sessionStorage */
-      store.S = setFn || store.setItem /* localStore, sessionStorage */
-      anycookie.push(store)
+  anycookie.push(WINDOW.localStorage)
+  anycookie.push(WINDOW.sessionStorage)
+  anycookie.push({ // adapted from github.com/jgallen23/cookie-monster
+    setItem: function(name, value, date, type, valueToUse) {
+      date = new Date()
+      type = typeof(value)
+      date.setTime(date.getTime() + 1e11); // 1e8 is approximately 3 years
+      valueToUse = (type === "object"  && type !== "undefined") ? JSON.stringify({v:value}) : value
+      DOCUMENT[COOKIE] = name + "=" + encodeURIComponent(valueToUse) + "; expires=" + date.toUTCString() + "; path=/" // ; secure
+    },
+    getItem: function(name) {
+      var nameEQ = name + "=",
+          ca = DOCUMENT[COOKIE].split(';'),
+          value = '',
+          firstChar = '',
+          parsed={};
+      for (var i = 0; i < ca[LENGTH]; i++) {
+        var c = ca[i];
+        while (c.charAt(0) == ' ') c = c[SUBSTRING](1, c[LENGTH]);
+        if (c.indexOf(nameEQ) === 0) {
+          value = decodeURIComponent(c[SUBSTRING](nameEQ[LENGTH], c[LENGTH]));
+          firstChar = value[SUBSTRING](0, 1);
+          if(firstChar=="{"){
+            try {
+              parsed = JSON.parse(value);
+              if("v" in parsed) return parsed.v;
+            } catch(e) {
+              return value;
+            }
+          }
+          if (value=="undefined") return UNDEFINED;
+          return value;
+        }
+      }
+      return null
     }
-  }
-
-  // add localStore and sessionStorage support
-  ['localStore', 'sessionStorage'].forEach(function(value) {
-    try {
-      add(value, WINDOW[value])
-    } catch(e) {}
-  })
-
-  // add globalStorage support
-  globalStore = WINDOW.globalStorage
-  add('globalStorage', globalStore, function(name) { // getFn
-    return globalStorage[host][name];
-  }, function (name, value) { // setFn
-    return globalStorage[host][name] = value;
-  })
-
-  add('cookie', [], function(name) { // getFn
-    return getFromStr(name, DOCUMENT[COOKIE]);
-  }, function(name, value) { // setFn
-//    DOCUMENT[COOKIE] = name + "=; expires=Mon, 20 Sep 2010 00:00:00 UTC; path=/; domain=" + cookieDomain; // is this needed?
-    DOCUMENT[COOKIE] = name + "=" + value + "; expires=Tue, 31 Dec 2099 00:00:00 UTC; path=/; domain=" + cookieDomain;
-  })
+  });
 
   // high level get/set operations against all data stores
   anycookie.get = function(name, result) {
-    for(i=0; i < anycookie.length; i++) {
-      store = anycookie[i]
-      if (store) {
+    for(i=0; i<anycookie[LENGTH]; i++) {
+      result = anycookie[i]
+      if (result) {
         try {
-          result = store.G(name)
-          if (undefined !== result) {   // found
-            anycookie.set(name, result) // persist everywhere
-            return result
-          }
-        } catch (e) {}
+          result = result.getItem(name)
+        } catch(e) {}
+        if (result) {
+          anycookie.set(name, result)
+          return result
+        }
       }
     }
-  }
-
-  anycookie.dump = function(name, result) {
-    result = {}
-    for(i=0; i < anycookie.length; i++) {
-      store = anycookie[i]
-      if (store) {
-        try {
-          result[store.N] = store.G(name)
-        } catch (e) {}
-      }
-    }
-    return result
   }
 
   anycookie.set = function(name, value) {
-    for(i=0; i < anycookie.length; i++) {
-      store = anycookie[i]
-      if (store) {
+    for(i=0; i<anycookie[LENGTH]; i++) {
+      result = anycookie[i]
+      if (result) {
         try {
-          store.S(name, value)
-        } catch (e) {}
+          result.setItem(name, value)
+        } catch(e) {}
       }
     }
   }
 
-})(window, document, 'cookie', 'length', 'AC')
+})(window, document, 'cookie', 'length', 'substring', 'AC')

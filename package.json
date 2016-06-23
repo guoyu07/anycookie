@@ -1,0 +1,19 @@
+{
+  "name": "anycookie",
+  "version": "1.0.0",
+  "description": "A light version of evercookie with no server side required",
+  "main": "anycookie.js",
+  "scripts": {
+    "test": "exit 0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yieme/anycookie.git"
+  },
+  "author": "yieme",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/yieme/anycookie/issues"
+  },
+  "homepage": "https://github.com/yieme/anycookie#readme"
+}
