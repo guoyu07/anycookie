@@ -11,7 +11,7 @@ A light version of evercookie with no server side required. 8xx bytes minimized 
 #### Development
 
 ```html
-<script src="https://rawgit.com/yieme/anycookie/1.0.4/anycookie.js"></script>
+<script src="https://rawgit.com/yieme/anycookie/master/anycookie.js"></script>
 <script>
   AC.set('key', 'value')
   console.log(AC.get('key')) // "value"
@@ -22,7 +22,7 @@ A light version of evercookie with no server side required. 8xx bytes minimized 
 #### Production
 
 ```html
-<script src="https://cdn.rawgit.com/yieme/anycookie/1.0.4/anycookie.min.js"></script>
+<script src="https://cdn.rawgit.com/yieme/anycookie/1.0.5/anycookie.min.js"></script>
 ```
 
 ## Namespace
