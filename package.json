@@ -1,6 +1,6 @@
 {
   "name": "anycookie",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A light version of evercookie with no server side required",
   "main": "anycookie.js",
   "scripts": {
